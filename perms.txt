@@ -1,0 +1,233 @@
+>>>>>>>>>redbird77 note<<<<<<<<<<
+this is just a collection of snippets and ramblings and newsgroups post i used in making this project.  the post by Thad Smith (thad@ionsky.com) is the base of the method i used.
+>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<
+
+From: BKTahoe@aol.com (BKTahoe@aol.com)
+Subject: Re: combinations algorithms 
+Newsgroups: comp.lang.pascal
+Date: 1995/06/03 
+
+Procedure Combinations(DigitStr:String);
+
+Var Base,Digit : Byte;
+    Max : Real;
+    i,Num : LongInt;
+    s : String;
+
+Begin
+Base := Length(DigitStr);
+Max := Exp(Base*Ln(Base));
+If Max > $7FFFFFFF
+  Then
+    Begin
+    Writeln(Base,'^',Base,' is too large for a FOR loop');
+    Halt;
+    End;
+For i := 0 to Trunc(Max)-1 do
+  Begin
+  Num := i; s := '';
+  For Digit := 1 to Length(DigitStr) do
+    Begin
+    s := DigitStr[Num mod Base + 1] + s;
+    Num := Num div Base;
+    End;
+  Writeln(s);
+  End;
+End;
+
+
+>>MY STUFF<<
+k objects from set of n
+            n!
+n_C_k = ----------
+        k!(n - k)!
+
+1 from set of 3 = 3!/1!*2! = 3*2*1/1*2*1 = 3/1 = 3
+2 from set of 3 = 3!/2!*1! = 3*2*1/2*1*1 = 6/2 = 3
+3 from 3 = 0!/0! = 1
+
+abc = ab,ac,bc
+
+421
+abc
+001 = c
+010 = b
+011 = bc
+100 = a
+101 = ac
+110 = ab
+111 = abc
+
+8421
+abcd
+00=0000=
+01=0001=d	abc
+02=0010=c	abd
+03=0011=cd	ab
+04=0100=b	acd
+05=0101=bd	ac
+06=0110=bc	ad
+07=0111=bcd	a
+08=1000=a	
+09=1001=ad	
+10=1010=ac
+11=1011=acd
+12=1100=ab
+13=1101=abd
+14=1110=abc
+15=1111=abcd
+
+Len(Set) = 4
+1 len = 01,02,04,08
+2 len = 03,05,06,09
+3 len = 07,11,13,14
+4 len = 15
+
+
+From: Thad Smith (thad@ionsky.com)
+Subject: Re: Finding combinations 
+Newsgroups: comp.programming
+Date: 2003-05-27 21:38:08 PST
+David Clark wrote:
+
+> I have a set of characters i.e. [a,b] and the combinations of length 4
+> can be made as
+> aaaa,aaab,aaba,abaa,baaa,aabb,abab,abba,baba,bbaa,baab,abbb,babb,bbab,bbba,bbbb
+> Problem is
+> The set can be of any length i.e. any nymber of characters can be
+> there and the string formed can be of any length i.e. 
+> aaaabbbabababbbbaabb..........
+
+By "string can be of any length", I assume you mean any GIVEN length, 
+not an unbounded string length (the latter has an infinite number of 
+possible strings).
+
+You can generate the output strings by considering an output string to 
+be a number written in the base of the number of characters in the set. 
+  In your example above, there are two items, so each output is a 
+different number in base 2.  For a given number of characters in the set 
+and a given length of output string, just count up from zero to the 
+maximum value for the given output length, using base n.
+
+Example: set = {a,b,c}, output length 2.
+
+Let a=0, b=1, c=2.  Count in base 3 since Len(set) = 3:
+  00  aa
+  01  ab
+  02  ac
+  10  ba
+  11  bb
+  12  bc
+  20  ca
+  21  cb
+  22  cc
+
+>>MY STUFF<<
+931 (base 3) set=abc
+-----------
+000 aaa
+001 aab
+002 aac
+010 aba
+011 abb
+012 abc
+020
+021
+022
+100
+101
+102
+110
+111
+112
+120
+121
+122
+200
+
+
+set = {a,b,c,d}  count in base 4
+olen=1
+41
+---
+0=a
+1=b
+2=c
+3=d
+
+olen = 2
+41
+--
+00=aa
+01=ab
+02=ac
+03=ad
+10=ba
+11=bb
+12=bc - 6 - 6 mod 4 = 2
+13=cd - 7
+20=ca - 8 
+21=cb - 9
+22=cc
+23=cd
+30=da
+31=db
+32=dc
+33=dd
+     0,1,2,3,4,5,6,7,8,9,a,b,c,d,e,f
+set {a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p} count in base 16, output len = 2
+16,1
+----
+00=aa
+01=ab
+02
+03
+..
+09
+0a
+0b
+0c
+0d
+0e
+0f=ap
+10=ba
+11=bb
+12=bc
+13
+14
+15
+16
+17
+18
+19
+1a=26
+1b
+1c
+1d
+1e
+1f
+20
+
+// idea : take first digit of set and then loop thru all digits adding one digit to sRet
+// then take second digit and loop thru all digits (including 2nd)
+// after you do this to all the digits, start over at one, and repeat the process,
+// but this time adding 2 digits to sRet, do this until (NO NO DOESN't WORK!)
+
+Generate function should start for now with OutputLen= 1 and go to ...
+
+Dim sReturn as String, iBase as Integer, i as Long, j as Integer
+
+// Base = 4
+Base = Len(sSet)
+
+// For i = 0 to 4 ^ 2 - 1
+For i = 0 To Base ^ OutputLen - 1
+
+ ' OutputLen acts as a field width.
+ NumInBase = DecToBase(i, Base, OutputLen)
+
+ For j = 1 To OutputLen
+  Mid$(sReturn, j, 1) = Mid$(sSet, j, 1)
+ Next
+
+Next
